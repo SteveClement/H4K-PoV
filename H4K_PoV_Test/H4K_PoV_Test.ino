@@ -11,10 +11,11 @@
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 
-Adafruit_NeoPixel pixel_strip = Adafruit_NeoPixel(16, DATA_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixel_strip = Adafruit_NeoPixel(12, DATA_PIN, NEO_GRB + NEO_KHZ800);
 
 int buttonPin = 6;
 int buttonState = 0;
+int lastButtonState = 0;     // previous state of the button
 
 void setup() {
   pixel_strip.begin(); // This is a comment BTW.
@@ -24,6 +25,40 @@ void setup() {
 }
 
 void loop() { // this is the main loop
+  buttonState = digitalRead(buttonPin);
+
+  if (buttonState != lastButtonState) {
+    // if the state has changed, increment the counter
+    if (buttonState == HIGH) {
+      // if the current state is HIGH then the button
+      // wend from off to on:
+      buttonPushCounter++;
+      Serial.println("on");
+      Serial.print("number of button pushes:  ");
+      Serial.println(buttonPushCounter);
+    } 
+    else {
+      // if the current state is LOW then the button
+      // went from on to off:
+      Serial.println("off"); 
+    }
+  }
+  // save the current state as the last state, 
+  //for next time through the loop
+  lastButtonState = buttonState;
+
+  
+  // turns on the LED every four button pushes by 
+  // checking the modulo of the button push counter.
+  // the modulo function gives you the remainder of 
+  // the division of two numbers:
+  if (buttonPushCounter % 4 == 0) {
+//    digitalWrite(ledPin, HIGH);
+  } else {
+//   digitalWrite(ledPin, LOW);
+  }
+
+
   // This function is called colorWipe and takes 2 arguments, color and a wait time
       pixel_strip.setPixelColor(0, pixel_strip.Color(255, 0, 0));
       pixel_strip.setPixelColor(1, pixel_strip.Color(255, 0, 0));
@@ -45,6 +80,9 @@ void loop() { // this is the main loop
       pixel_strip.show();
   }
 
+}
+
+/* 
 // Fill the dots one after the other with a color
 void colorWipe(uint32_t c, uint8_t wait) {
 
@@ -113,5 +151,4 @@ for (uint16_t j=0; j<13; j++) {
     pixel_strip.setPixelColor(j, 0);
     pixel_strip.show();
 }
-}
-
+*/
