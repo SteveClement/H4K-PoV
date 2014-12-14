@@ -13,13 +13,19 @@ int brightness = 128;
 int wait = 150;
 int j;
 
+struct Tuple {
+  int last;
+  int push;
+};
+
 unsigned long red = strip.Color(255, 0, 0);
 unsigned long green = strip.Color(0, 255, 0);
 unsigned long blue = strip.Color(0, 0, 255);
 unsigned long white = strip.Color(255, 255, 255);
 unsigned long lightBlue = strip.Color(0, 216, 230);
+unsigned long black = strip.Color(0, 0, 0);
 
-int serialDebug = 0;
+int serialDebug = 1;
 
 void setup() {
   strip.begin(); // This is a comment BTW.
@@ -30,35 +36,14 @@ void setup() {
     Serial.begin(9600);
   }
   startUp();
+  delay(500);
 }
 
 void loop() { // this is the main loop
 
-  buttonState = digitalRead(buttonPin);
-
-  if (buttonState != lastButtonState) {
-    // if the state has changed, increment the counter
-    if (buttonState == HIGH) {
-      // if the current state is HIGH then the button
-      // wend from off to on:
-      buttonPushCounter++;
-      if (serialDebug) {
-        Serial.println("on");
-        Serial.print("number of button pushes:  ");
-        Serial.println(buttonPushCounter);
-      }
-    } 
-    else {
-      // if the current state is LOW then the button
-      // went from on to off:
-      if (serialDebug) {
-        Serial.println("off"); 
-      }
-    }
-  }
-  // save the current state as the last state, 
-  //for next time through the loop
-  lastButtonState = buttonState;
+  struct Tuple buttonStates = getButton(lastButtonState, buttonPushCounter);
+  lastButtonState = buttonStates.last;
+  buttonPushCounter = buttonStates.push;
 
   if (buttonPushCounter == 1) {
          for (j=0; j < 8; j++) {
@@ -66,7 +51,6 @@ void loop() { // this is the main loop
          }
          if (serialDebug) {
            Serial.println("r");
-           Serial.println(buttonPushCounter);
          }
          strip.show();
          delay(wait);
@@ -92,6 +76,33 @@ void loop() { // this is the main loop
          delay(wait);
   }
   if (buttonPushCounter == 4) {
+         rainbow(20);
+         if (serialDebug) {
+           Serial.println("rainbow");
+         }
+         strip.show();
+         dark();
+         delay(wait);
+  }
+  if (buttonPushCounter == 5) {
+         rainbowCycle(20);
+         if (serialDebug) {
+           Serial.println("rainbowCycle Flag");
+         }
+         strip.show();
+         dark();
+         delay(wait);
+  }
+  if (buttonPushCounter == 6) {
+         theaterChaseRainbow(50);
+         if (serialDebug) {
+           Serial.println("theaterChaseRainbow Flag");
+         }
+         strip.show();
+         dark();
+         delay(wait);
+  }
+  if (buttonPushCounter == 7) {
          startUp();
          if (serialDebug) {
            Serial.println("startUp Flag");
@@ -117,12 +128,23 @@ void startUp() {
   strip.show();
 }
 
+void dark() {
+  for (j=0; j < 8; j++) {
+    strip.setPixelColor(j, black);
+  }
+}
+
 void rainbow(uint8_t wait) {
   uint16_t i, j;
 
   for(j=0; j<256; j++) {
     for(i=0; i<strip.numPixels(); i++) {
       strip.setPixelColor(i, Wheel((i+j) & 255));
+      struct Tuple buttonStates = getButton(lastButtonState, buttonPushCounter);
+      if (buttonStates.last == 0) {
+        dark();
+        return;
+      }
     }
     strip.show();
     delay(wait);
@@ -136,6 +158,12 @@ void rainbowCycle(uint8_t wait) {
   for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
     for(i=0; i< strip.numPixels(); i++) {
       strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
+      struct Tuple buttonStates = getButton(lastButtonState, buttonPushCounter);
+      if (buttonStates.last == 0) {
+        dark();
+        return;
+      }
+
     }
     strip.show();
     delay(wait);
@@ -148,6 +176,12 @@ void theaterChaseRainbow(uint8_t wait) {
     for (int q=0; q < 3; q++) {
         for (int i=0; i < strip.numPixels(); i=i+3) {
           strip.setPixelColor(i+q, Wheel( (i+j) % 255));    //turn every third pixel on
+          struct Tuple buttonStates = getButton(lastButtonState, buttonPushCounter);
+          if (buttonStates.last == 0) {
+            dark();
+            return;
+          }
+
         }
         strip.show();
        
@@ -155,6 +189,12 @@ void theaterChaseRainbow(uint8_t wait) {
        
         for (int i=0; i < strip.numPixels(); i=i+3) {
           strip.setPixelColor(i+q, 0);        //turn every third pixel off
+          struct Tuple buttonStates = getButton(lastButtonState, buttonPushCounter);
+          if (buttonStates.last == 0) {
+            dark();
+            return;
+          }
+
         }
     }
   }
@@ -175,3 +215,33 @@ uint32_t Wheel(byte WheelPos) {
   }
 }
 
+struct Tuple getButton(uint8_t lastButtonstate, uint8_t buttonPushCounter) {
+  buttonState = digitalRead(buttonPin);
+
+  if (buttonState != lastButtonState) {
+    // if the state has changed, increment the counter
+    if (buttonState == HIGH) {
+      // if the current state is HIGH then the button
+      // wend from off to on:
+      buttonPushCounter++;
+      if (serialDebug) {
+        Serial.println("on");
+        Serial.print("number of button pushes:  ");
+        Serial.println(buttonPushCounter);
+      }
+    } 
+    else {
+      // if the current state is LOW then the button
+      // went from on to off:
+      if (serialDebug) {
+        Serial.println("off"); 
+      }
+    }
+  }
+  // save the current state as the last state, 
+  //for next time through the loop
+  lastButtonState = buttonState;
+  
+  Tuple states = { lastButtonState, buttonPushCounter };
+  return states;
+}
