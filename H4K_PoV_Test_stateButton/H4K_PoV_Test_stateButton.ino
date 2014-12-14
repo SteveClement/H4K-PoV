@@ -27,22 +27,19 @@ This example code is in the public domain.
 
 // this constant won't change:
 const int  buttonPin = 6;    // the pin that the pushbutton is attached to
-const int ledPin = 13;       // the pin that the LED is attached to
 
 // Variables will change:
 int buttonPushCounter = 0;   // counter for the number of button presses
 int buttonState = 0;         // current state of the button
 int lastButtonState = 0;     // previous state of the button
+int ledPin = 12;
 
 void setup() {
   // initialize the button pin as a input:
   pinMode(buttonPin, INPUT_PULLUP);
-  // initialize the LED as an output:
-  pinMode(ledPin, OUTPUT);
   // initialize serial communication:
   Serial.begin(9600);
 }
-
 
 void loop() {
   // read the pushbutton input pin:

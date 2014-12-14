@@ -1,29 +1,23 @@
 #include <Adafruit_NeoPixel.h>
 
-// DATA_PIN is a constant (you do not want to change your pin setup mid-program)
-#define DATA_PIN 12
-
-// Parameter 1 = number of pixels in strip
-// Parameter 2 = Arduino pin number (most are valid)
-// Parameter 3 = pixel type flags, add together as needed:
-//   NEO_KHZ800  800 KHz bitstream (most NeoPixel products w/WS2812 LEDs)
-//   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
-//   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
-//   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
-
-Adafruit_NeoPixel pixel_strip = Adafruit_NeoPixel(12, DATA_PIN, NEO_GRB + NEO_KHZ800);
+#define DATA_PIN 1
+#define NUM_PIXELS 8
+Adafruit_NeoPixel pixel_strip = Adafruit_NeoPixel(NUM_PIXELS, DATA_PIN, NEO_GRB + NEO_KHZ800);
 
 int buttonPin = 6;
+
 int buttonState = 0;
 int lastButtonState = 0;     // previous state of the button
 int buttonPushCounter = 0;   // counter for the number of button presses
 
-
 void setup() {
   pixel_strip.begin(); // This is a comment BTW.
   pixel_strip.show(); // Initialize all pixels to 'off'
-  pixel_strip.setBrightness(32);
-  pinMode(buttonPin, INPUT_PULLUP);  
+  pixel_strip.setBrightness(255);
+  pinMode(buttonPin, INPUT_PULLUP);
+  //Serial.begin(9600);
+  pixel_strip.setPixelColor(0, pixel_strip.Color(0, 0, 255));
+  pixel_strip.show();
 }
 
 void loop() { // this is the main loop
@@ -35,14 +29,14 @@ void loop() { // this is the main loop
       // if the current state is HIGH then the button
       // wend from off to on:
       buttonPushCounter++;
-      //Serial.println("on");
-      //Serial.print("number of button pushes:  ");
-      //Serial.println(buttonPushCounter);
+//      Serial.println("on");
+//      Serial.print("number of button pushes:  ");
+//      Serial.println(buttonPushCounter);
     } 
     else {
       // if the current state is LOW then the button
       // went from on to off:
-      //Serial.println("off"); 
+//      Serial.println("off"); 
     }
   }
   // save the current state as the last state, 
@@ -54,26 +48,55 @@ void loop() { // this is the main loop
   // checking the modulo of the button push counter.
   // the modulo function gives you the remainder of 
   // the division of two numbers:
-  if (buttonPushCounter % 4 == 0) {
+  if (buttonPushCounter % 2 == 0) {
           pixel_strip.setPixelColor(0, pixel_strip.Color(255, 0, 0));
-          delay(500);
-//    digitalWrite(ledPin, HIGH);
+          pixel_strip.setPixelColor(1, pixel_strip.Color(255, 0, 0));
+          pixel_strip.setPixelColor(2, pixel_strip.Color(255, 0, 0));
+          pixel_strip.setPixelColor(3, pixel_strip.Color(255, 0, 0));
+          pixel_strip.setPixelColor(4, pixel_strip.Color(255, 0, 0));
+          pixel_strip.setPixelColor(5, pixel_strip.Color(255, 0, 0));
+          pixel_strip.setPixelColor(6, pixel_strip.Color(255, 0, 0));
+          pixel_strip.setPixelColor(7, pixel_strip.Color(255, 0, 0));
+
+//          Serial.println("r");
+//          Serial.println(buttonPushCounter);
+
+            pixel_strip.show();
+          delay(250);
   } 
 
-  if (buttonPushCounter % 8 == 0) {
+  if (buttonPushCounter % 3 == 0) {
           pixel_strip.setPixelColor(0, pixel_strip.Color(0, 255, 0));
-          delay(500);
-//    digitalWrite(ledPin, HIGH);
+          pixel_strip.setPixelColor(1, pixel_strip.Color(0, 255, 0));
+          pixel_strip.setPixelColor(2, pixel_strip.Color(0, 255, 0));
+          pixel_strip.setPixelColor(3, pixel_strip.Color(0, 255, 0));
+          pixel_strip.setPixelColor(4, pixel_strip.Color(0, 255, 0));
+          pixel_strip.setPixelColor(5, pixel_strip.Color(0, 255, 0));
+          pixel_strip.setPixelColor(6, pixel_strip.Color(0, 255, 0));
+          pixel_strip.setPixelColor(7, pixel_strip.Color(0, 255, 0));
+//          Serial.println("g");
+            pixel_strip.show();
+
+          delay(250);
   } 
 
-  if (buttonPushCounter % 16 == 0) {
+  if (buttonPushCounter % 4 == 0) {
           pixel_strip.setPixelColor(0, pixel_strip.Color(0, 0, 255));
-          delay(500);
-//    digitalWrite(ledPin, HIGH);
+          pixel_strip.setPixelColor(1, pixel_strip.Color(0, 0, 255));
+          pixel_strip.setPixelColor(2, pixel_strip.Color(0, 0, 255));
+          pixel_strip.setPixelColor(3, pixel_strip.Color(0, 0, 255));
+          pixel_strip.setPixelColor(4, pixel_strip.Color(0, 0, 255));
+          pixel_strip.setPixelColor(5, pixel_strip.Color(0, 0, 255));
+          pixel_strip.setPixelColor(6, pixel_strip.Color(0, 0, 255));
+          pixel_strip.setPixelColor(7, pixel_strip.Color(0, 0, 255));
+ //         Serial.println("b");
+          pixel_strip.show();
+          buttonPushCounter = 1;
+          delay(250);
   } 
 
 
-
+/*
   // This function is called colorWipe and takes 2 arguments, color and a wait time
       pixel_strip.setPixelColor(0, pixel_strip.Color(255, 0, 0));
       pixel_strip.setPixelColor(1, pixel_strip.Color(255, 0, 0));
@@ -94,7 +117,7 @@ void loop() { // this is the main loop
       pixel_strip.setPixelColor(6, pixel_strip.Color(0, 255, 0));
       pixel_strip.show();
   }
-
+*/
 }
 
 /* 
