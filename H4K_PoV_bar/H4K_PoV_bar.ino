@@ -18,7 +18,6 @@ unsigned long blue = pixel_strip.Color(0, 0, 255);
 unsigned long white = pixel_strip.Color(255, 255, 255);
 unsigned long lightBlue = pixel_strip.Color(0, 216, 230);
 
-
 void setup() {
   pixel_strip.begin(); // This is a comment BTW.
   pixel_strip.show(); // Initialize all pixels to 'off'
@@ -58,14 +57,9 @@ void loop() { // this is the main loop
   // the modulo function gives you the remainder of 
   // the division of two numbers:
   if (buttonPushCounter % 2 == 0) {
-          pixel_strip.setPixelColor(0, red);
-          pixel_strip.setPixelColor(1, red);
-          pixel_strip.setPixelColor(2, red);
-          pixel_strip.setPixelColor(3, red);
-          pixel_strip.setPixelColor(4, red);
-          pixel_strip.setPixelColor(5, red);
-          pixel_strip.setPixelColor(6, red);
-          pixel_strip.setPixelColor(7, red);
+         for (j=0; j < 8; j++) {
+          pixel_strip.setPixelColor(j, red);
+         }
 
           Serial.println("r");
           Serial.println(buttonPushCounter);
@@ -85,43 +79,14 @@ void loop() { // this is the main loop
   } 
 
   if (buttonPushCounter % 4 == 0) {
-          pixel_strip.setPixelColor(0, blue);
-          pixel_strip.setPixelColor(1, blue);
-          pixel_strip.setPixelColor(2, blue);
-          pixel_strip.setPixelColor(3, blue);
-          pixel_strip.setPixelColor(4, blue);
-          pixel_strip.setPixelColor(5, blue);
-          pixel_strip.setPixelColor(6, blue);
-          pixel_strip.setPixelColor(7, blue);
+         for (j=0; j < 8; j++) {
+          pixel_strip.setPixelColor(j, blue);
+         }
           Serial.println("b");
           pixel_strip.show();
           buttonPushCounter = 1;
           delay(250);
   } 
-
-
-/*
-  // This function is called colorWipe and takes 2 arguments, color and a wait time
-      pixel_strip.setPixelColor(0, red);
-      pixel_strip.setPixelColor(1, red);
-      pixel_strip.setPixelColor(2, red);
-      pixel_strip.setPixelColor(3, red);
-      pixel_strip.setPixelColor(4, red);
-      pixel_strip.setPixelColor(5, red);
-      pixel_strip.setPixelColor(6, red);
-      pixel_strip.show();
-        if (digitalRead(buttonPin) == LOW)
-  {
-      pixel_strip.setPixelColor(0, green);
-      pixel_strip.setPixelColor(1, green);
-      pixel_strip.setPixelColor(2, green);
-      pixel_strip.setPixelColor(3, green);
-      pixel_strip.setPixelColor(4, green);
-      pixel_strip.setPixelColor(5, green);
-      pixel_strip.setPixelColor(6, green);
-      pixel_strip.show();
-  }
-*/
 }
 
 void startUp() {
@@ -138,74 +103,3 @@ void startUp() {
 
   pixel_strip.show();
 }
-
-/* 
-// Fill the dots one after the other with a color
-void colorWipe(uint32_t c, uint8_t wait) {
-
-  for (uint16_t j=0; j<13; j++) {
-      pixel_strip.setPixelColor(0, c);
-      pixel_strip.setPixelColor(1, c);   
-      pixel_strip.setPixelColor(2, c);
-      pixel_strip.setPixelColor(3, c);   
-      pixel_strip.setPixelColor(4, c);
-      pixel_strip.setPixelColor(5, c);   
-      delay(250);
-      pixel_strip.setPixelColor(6, c);
-      pixel_strip.setPixelColor(7, c);   
-      pixel_strip.setPixelColor(8, c);
-      pixel_strip.setPixelColor(9, c);   
-      pixel_strip.setPixelColor(10, c);
-      pixel_strip.setPixelColor(11, c);   
-      pixel_strip.show();
-  }
-    delay(500);
-
-for (uint16_t j=0; j<13; j++) {
-    pixel_strip.setPixelColor(j, 0,255,0);
-    pixel_strip.show();
-}
-delay(1500);
-for (uint16_t j=0; j<13; j++) {
-    pixel_strip.setPixelColor(j, 0);
-    pixel_strip.show();
-}
-delay(750);
-for (uint16_t j=0; j<13; j++) {
-    pixel_strip.setPixelColor(j, 0,255,0);
-    pixel_strip.show();
-}
-delay(750);
-for (uint16_t j=0; j<13; j++) {
-    pixel_strip.setPixelColor(j, 0);
-    pixel_strip.show();
-}
-delay(750);
-for (uint16_t j=0; j<13; j++) {
-    pixel_strip.setPixelColor(j, 0,255,0);
-    pixel_strip.show();
-}
-delay(750);
-for (uint16_t j=0; j<13; j++) {
-    pixel_strip.setPixelColor(j, 0);
-    pixel_strip.show();
-}
-delay(750);
-for (uint16_t j=0; j<13; j++) {
-    pixel_strip.setPixelColor(j, 0,255,0);
-    pixel_strip.show();
-}
-delay(750);
-for (uint16_t j=0; j<13; j++) {
-    pixel_strip.setPixelColor(j, 0);
-    pixel_strip.show();
-}
-
-for (uint16_t j=0; j<13; j++) {
-    pixel_strip.setPixelColor(j, 0,0,255);
-    pixel_strip.show();
-    delay(100);
-    pixel_strip.setPixelColor(j, 0);
-    pixel_strip.show();
-}
-*/
