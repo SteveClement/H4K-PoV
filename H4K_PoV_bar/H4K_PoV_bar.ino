@@ -2,7 +2,7 @@
 
 #define DATA_PIN 1
 #define NUM_PIXELS 8
-Adafruit_NeoPixel pixel_strip = Adafruit_NeoPixel(NUM_PIXELS, DATA_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_PIXELS, DATA_PIN, NEO_GRB + NEO_KHZ800);
 
 int buttonPin = 6;
 
@@ -13,18 +13,18 @@ int brightness = 128;
 int wait = 150;
 int j;
 
-unsigned long red = pixel_strip.Color(255, 0, 0);
-unsigned long green = pixel_strip.Color(0, 255, 0);
-unsigned long blue = pixel_strip.Color(0, 0, 255);
-unsigned long white = pixel_strip.Color(255, 255, 255);
-unsigned long lightBlue = pixel_strip.Color(0, 216, 230);
+unsigned long red = strip.Color(255, 0, 0);
+unsigned long green = strip.Color(0, 255, 0);
+unsigned long blue = strip.Color(0, 0, 255);
+unsigned long white = strip.Color(255, 255, 255);
+unsigned long lightBlue = strip.Color(0, 216, 230);
 
-int serialDebug = 1;
+int serialDebug = 0;
 
 void setup() {
-  pixel_strip.begin(); // This is a comment BTW.
-  pixel_strip.show(); // Initialize all pixels to 'off'
-  pixel_strip.setBrightness(brightness);
+  strip.begin(); // This is a comment BTW.
+  strip.show(); // Initialize all pixels to 'off'
+  strip.setBrightness(brightness);
   pinMode(buttonPin, INPUT_PULLUP);
   if (serialDebug) {
     Serial.begin(9600);
@@ -60,65 +60,118 @@ void loop() { // this is the main loop
   //for next time through the loop
   lastButtonState = buttonState;
 
-  // turns on the LED every four button pushes by 
-  // checking the modulo of the button push counter.
-  // the modulo function gives you the remainder of 
-  // the division of two numbers:
-  if (buttonPushCounter) {
+  if (buttonPushCounter == 1) {
          for (j=0; j < 8; j++) {
-           pixel_strip.setPixelColor(j, red);
+           strip.setPixelColor(j, red);
          }
          if (serialDebug) {
            Serial.println("r");
            Serial.println(buttonPushCounter);
          }
-         pixel_strip.show();
+         strip.show();
          delay(wait);
-  } 
-
+  }
   if (buttonPushCounter == 2) {
          for (j=0; j < 8; j++) {
-           pixel_strip.setPixelColor(j, green);
+           strip.setPixelColor(j, green);
          }
          if (serialDebug) {
            Serial.println("g");
          }
-         pixel_strip.show();
+         strip.show();
          delay(wait);
-  } 
-
+  }
   if (buttonPushCounter == 3) {
          for (j=0; j < 8; j++) {
-           pixel_strip.setPixelColor(j, blue);
+           strip.setPixelColor(j, blue);
          }
          if (serialDebug) {
            Serial.println("b");
          }
-         pixel_strip.show();
+         strip.show();
          delay(wait);
-  } 
+  }
   if (buttonPushCounter == 4) {
          startUp();
          if (serialDebug) {
            Serial.println("startUp Flag");
          }
-         pixel_strip.show();
+         strip.show();
          buttonPushCounter = 0;
          delay(wait);
-  } 
+  }
 }
 
 void startUp() {
-  pixel_strip.setPixelColor(0, red);
-  pixel_strip.setPixelColor(1, red);
-  pixel_strip.setPixelColor(2, red);
+  strip.setPixelColor(0, red);
+  strip.setPixelColor(1, red);
+  strip.setPixelColor(2, red);
 
-  pixel_strip.setPixelColor(3, white);
-  pixel_strip.setPixelColor(4, white);
+  strip.setPixelColor(3, white);
+  strip.setPixelColor(4, white);
 
-  pixel_strip.setPixelColor(5, lightBlue);
-  pixel_strip.setPixelColor(6, lightBlue);
-  pixel_strip.setPixelColor(7, lightBlue);
+  strip.setPixelColor(5, lightBlue);
+  strip.setPixelColor(6, lightBlue);
+  strip.setPixelColor(7, lightBlue);
 
-  pixel_strip.show();
+  strip.show();
 }
+
+void rainbow(uint8_t wait) {
+  uint16_t i, j;
+
+  for(j=0; j<256; j++) {
+    for(i=0; i<strip.numPixels(); i++) {
+      strip.setPixelColor(i, Wheel((i+j) & 255));
+    }
+    strip.show();
+    delay(wait);
+  }
+}
+
+// Slightly different, this makes the rainbow equally distributed throughout
+void rainbowCycle(uint8_t wait) {
+  uint16_t i, j;
+
+  for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
+    for(i=0; i< strip.numPixels(); i++) {
+      strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
+    }
+    strip.show();
+    delay(wait);
+  }
+}
+
+//Theatre-style crawling lights with rainbow effect
+void theaterChaseRainbow(uint8_t wait) {
+  for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
+    for (int q=0; q < 3; q++) {
+        for (int i=0; i < strip.numPixels(); i=i+3) {
+          strip.setPixelColor(i+q, Wheel( (i+j) % 255));    //turn every third pixel on
+        }
+        strip.show();
+       
+        delay(wait);
+       
+        for (int i=0; i < strip.numPixels(); i=i+3) {
+          strip.setPixelColor(i+q, 0);        //turn every third pixel off
+        }
+    }
+  }
+}
+
+// Input a value 0 to 255 to get a color value.
+// The colours are a transition r - g - b - back to r.
+uint32_t Wheel(byte WheelPos) {
+  WheelPos = 255 - WheelPos;
+  if(WheelPos < 85) {
+   return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+  } else if(WheelPos < 170) {
+    WheelPos -= 85;
+   return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+  } else {
+   WheelPos -= 170;
+   return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+  }
+}
+
