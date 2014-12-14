@@ -81,7 +81,6 @@ void loop() { // this is the main loop
            Serial.println("rainbow");
          }
          strip.show();
-         dark();
          delay(wait);
   }
   if (buttonPushCounter == 5) {
@@ -90,7 +89,6 @@ void loop() { // this is the main loop
            Serial.println("rainbowCycle Flag");
          }
          strip.show();
-         dark();
          delay(wait);
   }
   if (buttonPushCounter == 6) {
@@ -99,7 +97,6 @@ void loop() { // this is the main loop
            Serial.println("theaterChaseRainbow Flag");
          }
          strip.show();
-         dark();
          delay(wait);
   }
   if (buttonPushCounter == 7) {
